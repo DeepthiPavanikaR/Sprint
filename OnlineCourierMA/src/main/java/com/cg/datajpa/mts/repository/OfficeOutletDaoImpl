@@ -10,48 +10,41 @@ import org.springframework.stereotype.Repository;
 
 import com.cg.mts.entities.CourierOfficeOutlet;
 import com.cg.mts.exception.OutletNotFoundException;
-@Repository
+
 public class OfficeOutletDaoImpl implements IOfficeOutletDao {
 
-	@PersistenceUnit
-	private EntityManagerFactory emf;
+	
+	 EntityManager emf;
+	 
+	public OfficeOutletDaoImpl() {
+		emf=JpaUtils.getEntityManager();
+	}
+
 	@Override
 	public void addNewOffice(CourierOfficeOutlet officeoutlet) {
-		EntityManager em=emf.createEntityManager();
-		em.getTransaction().begin();
-		em.persist(officeoutlet);
-		em.getTransaction().commit();
-		em.close();
+		emf.persist(officeoutlet);
 		
 	}
 
 	@Override
 	public void removeNewOffice(CourierOfficeOutlet officeoutlet) {
-		EntityManager em=emf.createEntityManager();
-		em.getTransaction().begin();
-		em.remove(officeoutlet);
-		em.getTransaction().commit();
-		em.close();
-		
+		emf.remove(officeoutlet);
 	}
 
 	@Override
 	public CourierOfficeOutlet getOfficeInfo(int officeid) throws OutletNotFoundException {
-		EntityManager em=emf.createEntityManager();
-		CourierOfficeOutlet outlet = em.find(CourierOfficeOutlet.class, officeid);
-		em.close();
-		if(outlet==null)
+		CourierOfficeOutlet o = emf.find(CourierOfficeOutlet.class, officeid);
+		if(o==null)
 			throw new OutletNotFoundException("Outlet does not exists");
 		else 
-			return outlet;
+			return o;
 	}
 
 	@Override
 	public List<CourierOfficeOutlet> getAllOfficesData() {
-		EntityManager em=emf.createEntityManager();
-		List<CourierOfficeOutlet> outlets = em.createQuery("Select t from officeoutlet t").getResultList();
-		em.close();
+		List<CourierOfficeOutlet> outlets = emf.createQuery("select t from officeoutlet t").getResultList();
 		return outlets;
 	}
 
 }
+
