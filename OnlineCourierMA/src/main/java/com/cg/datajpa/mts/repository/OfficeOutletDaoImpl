@@ -42,7 +42,7 @@ public class OfficeOutletDaoImpl implements IOfficeOutletDao {
 
 	@Override
 	public List<CourierOfficeOutlet> getAllOfficesData() {
-		List<CourierOfficeOutlet> outlets = emf.createQuery("select t from officeoutlet t").getResultList();
+		List<CourierOfficeOutlet> outlets = emf.createQuery("Select t from officeoutlet t").getResultList();
 		return outlets;
 	}
 
