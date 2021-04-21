@@ -1,0 +1,101 @@
+package com.cg.mts.repository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import com.cg.mts.entities.Complaint;
+import com.cg.mts.entities.Courier;
+import com.cg.mts.entities.CourierOfficeOutlet;
+import com.cg.mts.entities.CourierStatus;
+
+public class CourierDaoImpl implements ICourierDao {
+	 EntityManager emf;
+	 
+
+	public CourierDaoImpl() {
+		emf=JpaUtils.getEntityManager();
+	}
+
+	@Override
+	public void addCourierInfo(Courier courier) {
+		emf.getTransaction().begin();
+		emf.persist(courier);
+		emf.getTransaction().commit();
+	}
+
+	@Override
+	public Courier getCourierInfo(int courierid) {
+		return emf.find(Courier.class, courierid);
+		
+		
+	}
+
+	@Override
+	public void removeCourierInfo(int courierid) {
+		emf.getTransaction().begin();
+		emf.remove(emf.find(Courier.class, courierid));
+		emf.getTransaction().commit();
+		
+	}
+
+	@Override
+	public List<Courier> getAllDeliveredCouriers() {
+		List<Courier> cour = emf.createQuery("Select c from Courier c where c.status=2").getResultList();
+		return cour;
+	}
+
+	@Override
+	public List<Courier> getAllDeliveredCouriersByDate(LocalDate date) {
+		TypedQuery<Courier> qry= emf.createQuery("Select c from Courier c where c.deliveredDate<=?1",Courier.class);
+		qry.setParameter(1, date);
+		List<Courier> cour=qry.getResultList();
+		return cour;
+	}
+
+	@Override
+	public void updateCourierInfoSetInitiated(Courier status) {
+		emf.getTransaction().begin();
+		Query qry= emf.createQuery("update Courier c set c.status=0 where c.courierid=?1");
+		qry.setParameter(1, status.getCourierid());
+		qry.executeUpdate();
+		emf.getTransaction().commit();
+		
+	}
+
+	@Override
+	public void updateCourierInfoSetIntransit(Courier status) {
+		emf.getTransaction().begin();
+		Query qry= emf.createQuery("update Courier c set c.status=1 where c.courierid=?1");
+		qry.setParameter(1, status.getCourierid());
+		qry.executeUpdate();
+		emf.getTransaction().commit();
+		
+	}
+
+	@Override
+	public void updateCourierInfoSetDelivered(Courier status) {
+		emf.getTransaction().begin();
+		Query qry= emf.createQuery("update Courier c set c.status=2 where c.courierid=?1");
+		qry.setParameter(1, status.getCourierid());
+		qry.executeUpdate();
+		emf.getTransaction().commit();
+		
+	}
+
+	@Override
+	public void updateCourierInfoSetRejected(Courier status) {
+		emf.getTransaction().begin();
+		Query qry= emf.createQuery("update Courier c set c.status=3 where c.courierid=?1");
+		qry.setParameter(1, status.getCourierid());
+		qry.executeUpdate();
+		emf.getTransaction().commit();
+		
+	}
+
+	
+
+}
