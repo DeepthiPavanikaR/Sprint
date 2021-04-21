@@ -1,0 +1,47 @@
+package com.cg.mts.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.cg.mts.entities.Courier;
+import com.cg.mts.entities.CourierStatus;
+import com.cg.mts.repository.CourierDaoImpl;
+
+public class ShipmentServiceImpl implements IShipmentService {
+	@Autowired
+	CourierDaoImpl courdao;
+   
+	
+	public void setCourdao(CourierDaoImpl courdao) {
+		this.courdao = courdao;
+	}
+
+	@Override
+	public void initiateShipmentTransaction(Courier courier) {
+		// TODO Auto-generated method stub
+		courdao.updateCourierInfoSetInitiated(courier);
+
+	}
+
+	@Override
+	public void checkShipmentStatus(Courier courier) {
+		// TODO Auto-generated method stub
+		courdao.updateCourierInfoSetIntransit(courier);
+		 
+       
+	}
+
+	@Override
+	public void closeShipmentTransaction(Courier courier) {
+		// TODO Auto-generated method stub
+		courdao.updateCourierInfoSetDelivered(courier);
+	}
+
+	@Override
+	public void rejectShipmentTransaction(Courier courier) {
+		// TODO Auto-generated method stub
+		courdao.updateCourierInfoSetRejected(courier);
+		
+
+	}
+
+}
